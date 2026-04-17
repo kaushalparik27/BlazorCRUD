@@ -1,0 +1,20 @@
+## .NET / ASP.NET Core
+obj/
+bin/
+*.user
+*.suo
+.vs/
+.vscode/
+*.DotSettings.user
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+## Logs
+*.log
+
+## OS
+.DS_Store
+Thumbs.db

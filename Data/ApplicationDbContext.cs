@@ -1,8 +1,5 @@
+using BlazorCRUD.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BlazorCRUD.Data
 {
@@ -14,14 +11,14 @@ namespace BlazorCRUD.Data
         }
 
         public DbSet<Employee> Employees { get; set; }
-    }
 
-    public class Employee
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Position { get; set; }
-        public DateTime DateOfJoining { get; set; }
-        public decimal Salary { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Employee>().HasKey(e => e.EmployeeId);
+            modelBuilder.Entity<Employee>().HasIndex(e => e.EmployeeCode).IsUnique();
+            modelBuilder.Entity<Employee>().HasIndex(e => e.Email).IsUnique();
+            modelBuilder.Entity<Employee>().Property(e => e.BasicSalary).HasColumnType("decimal(18,2)");
+        }
     }
 }

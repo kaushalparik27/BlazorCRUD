@@ -10,31 +10,31 @@ namespace BlazorCRUD.Models
 
         [Required]
         [StringLength(10)]
-        public string EmployeeCode { get; set; }
+        public string EmployeeCode { get; set; } = string.Empty;
 
         [Required]
         [StringLength(50)]
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
 
         [Required]
         [StringLength(50)]
-        public string LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
 
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Required]
         [Phone]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } = string.Empty;
 
         [Required]
         [StringLength(50)]
-        public string Department { get; set; }
+        public string Department { get; set; } = string.Empty;
 
         [Required]
         [StringLength(50)]
-        public string Designation { get; set; }
+        public string Designation { get; set; } = string.Empty;
 
         [Required]
         [DataType(DataType.Date)]

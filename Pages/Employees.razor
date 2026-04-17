@@ -1,0 +1,348 @@
+@page "/employees"
+@inject IEmployeeRepository EmployeeRepository
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Employee Management</h1>
+        <button class="btn btn-primary" @onclick="ShowAddForm">
+            &#43; Add New Employee
+        </button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            @errorMessage
+            <button type="button" class="btn-close" @onclick="() => errorMessage = string.Empty"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success alert-dismissible" role="alert">
+            @successMessage
+            <button type="button" class="btn-close" @onclick="() => successMessage = string.Empty"></button>
+        </div>
+    }
+
+    @if (isLoading)
+    {
+        <div class="text-center my-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading employees...</p>
+        </div>
+    }
+    else if (employees == null || employees.Count == 0)
+    {
+        <div class="alert alert-info">
+            No employee records found. Click <strong>Add New Employee</strong> to get started.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Joining Date</th>
+                        <th>Basic Salary</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var emp in employees)
+                    {
+                        <tr>
+                            <td>@emp.EmployeeCode</td>
+                            <td>@emp.FirstName @emp.LastName</td>
+                            <td>@emp.Email</td>
+                            <td>@emp.PhoneNumber</td>
+                            <td>@emp.Department</td>
+                            <td>@emp.Designation</td>
+                            <td>@emp.JoiningDate.ToString("dd MMM yyyy")</td>
+                            <td>@emp.BasicSalary.ToString("N2")</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-warning me-1" @onclick="() => ShowEditForm(emp)">
+                                    &#9998; Edit
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" @onclick="() => ConfirmDelete(emp)">
+                                    &#128465; Delete
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@* Add / Edit Modal *@
+@if (showForm)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content shadow">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">@(isEditing ? "Edit Employee" : "Add New Employee")</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="HideForm"></button>
+                </div>
+                <EditForm Model="@currentEmployee" OnValidSubmit="@SaveEmployee">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Employee Code <span class="text-danger">*</span></label>
+                                <InputText class="form-control" @bind-Value="currentEmployee.EmployeeCode" placeholder="e.g. EMP001" />
+                                <ValidationMessage For="@(() => currentEmployee.EmployeeCode)" class="text-danger small" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Department <span class="text-danger">*</span></label>
+                                <InputText class="form-control" @bind-Value="currentEmployee.Department" placeholder="e.g. Engineering" />
+                                <ValidationMessage For="@(() => currentEmployee.Department)" class="text-danger small" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">First Name <span class="text-danger">*</span></label>
+                                <InputText class="form-control" @bind-Value="currentEmployee.FirstName" placeholder="First name" />
+                                <ValidationMessage For="@(() => currentEmployee.FirstName)" class="text-danger small" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name <span class="text-danger">*</span></label>
+                                <InputText class="form-control" @bind-Value="currentEmployee.LastName" placeholder="Last name" />
+                                <ValidationMessage For="@(() => currentEmployee.LastName)" class="text-danger small" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email <span class="text-danger">*</span></label>
+                                <InputText class="form-control" @bind-Value="currentEmployee.Email" placeholder="email@example.com" />
+                                <ValidationMessage For="@(() => currentEmployee.Email)" class="text-danger small" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                <InputText class="form-control" @bind-Value="currentEmployee.PhoneNumber" placeholder="+1-555-0100" />
+                                <ValidationMessage For="@(() => currentEmployee.PhoneNumber)" class="text-danger small" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Designation <span class="text-danger">*</span></label>
+                                <InputText class="form-control" @bind-Value="currentEmployee.Designation" placeholder="e.g. Software Engineer" />
+                                <ValidationMessage For="@(() => currentEmployee.Designation)" class="text-danger small" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Joining Date <span class="text-danger">*</span></label>
+                                <InputDate class="form-control" @bind-Value="currentEmployee.JoiningDate" />
+                                <ValidationMessage For="@(() => currentEmployee.JoiningDate)" class="text-danger small" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Basic Salary <span class="text-danger">*</span></label>
+                                <InputNumber class="form-control" @bind-Value="currentEmployee.BasicSalary" placeholder="0.00" />
+                                <ValidationMessage For="@(() => currentEmployee.BasicSalary)" class="text-danger small" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="HideForm">Cancel</button>
+                        <button type="submit" class="btn btn-primary" disabled="@isSaving">
+                            @if (isSaving)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                            }
+                            @(isEditing ? "Update Employee" : "Save Employee")
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@* Delete Confirmation Modal *@
+@if (showDeleteConfirm && employeeToDelete != null)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content shadow">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the following employee?</p>
+                    <ul>
+                        <li><strong>Name:</strong> @employeeToDelete.FirstName @employeeToDelete.LastName</li>
+                        <li><strong>Code:</strong> @employeeToDelete.EmployeeCode</li>
+                        <li><strong>Department:</strong> @employeeToDelete.Department</li>
+                    </ul>
+                    <p class="text-danger"><strong>This action cannot be undone.</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CancelDelete">Cancel</button>
+                    <button type="button" class="btn btn-danger" @onclick="DeleteEmployee" disabled="@isSaving">
+                        @if (isSaving)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                        }
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Employee>? employees;
+    private Employee currentEmployee = new Employee();
+    private Employee? employeeToDelete;
+
+    private bool showForm = false;
+    private bool isEditing = false;
+    private bool showDeleteConfirm = false;
+    private bool isLoading = true;
+    private bool isSaving = false;
+
+    private string errorMessage = string.Empty;
+    private string successMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEmployees();
+    }
+
+    private async Task LoadEmployees()
+    {
+        try
+        {
+            isLoading = true;
+            errorMessage = string.Empty;
+            employees = await EmployeeRepository.GetAllEmployeesAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading employees: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ShowAddForm()
+    {
+        currentEmployee = new Employee { JoiningDate = DateTime.Today };
+        isEditing = false;
+        showForm = true;
+        errorMessage = string.Empty;
+        successMessage = string.Empty;
+    }
+
+    private void ShowEditForm(Employee employee)
+    {
+        currentEmployee = new Employee
+        {
+            EmployeeId = employee.EmployeeId,
+            EmployeeCode = employee.EmployeeCode,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
+            Email = employee.Email,
+            PhoneNumber = employee.PhoneNumber,
+            Department = employee.Department,
+            Designation = employee.Designation,
+            JoiningDate = employee.JoiningDate,
+            BasicSalary = employee.BasicSalary
+        };
+        isEditing = true;
+        showForm = true;
+        errorMessage = string.Empty;
+        successMessage = string.Empty;
+    }
+
+    private void HideForm()
+    {
+        showForm = false;
+    }
+
+    private async Task SaveEmployee()
+    {
+        try
+        {
+            isSaving = true;
+            errorMessage = string.Empty;
+
+            if (isEditing)
+            {
+                await EmployeeRepository.UpdateEmployeeAsync(currentEmployee);
+                successMessage = $"Employee '{currentEmployee.FirstName} {currentEmployee.LastName}' updated successfully.";
+            }
+            else
+            {
+                await EmployeeRepository.AddEmployeeAsync(currentEmployee);
+                successMessage = $"Employee '{currentEmployee.FirstName} {currentEmployee.LastName}' added successfully.";
+            }
+
+            showForm = false;
+            await LoadEmployees();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error saving employee: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void ConfirmDelete(Employee employee)
+    {
+        employeeToDelete = employee;
+        showDeleteConfirm = true;
+        errorMessage = string.Empty;
+        successMessage = string.Empty;
+    }
+
+    private void CancelDelete()
+    {
+        showDeleteConfirm = false;
+        employeeToDelete = null;
+    }
+
+    private async Task DeleteEmployee()
+    {
+        if (employeeToDelete == null) return;
+
+        try
+        {
+            isSaving = true;
+            var deleted = await EmployeeRepository.DeleteEmployeeAsync(employeeToDelete.EmployeeId);
+            if (deleted)
+            {
+                successMessage = $"Employee '{employeeToDelete.FirstName} {employeeToDelete.LastName}' deleted successfully.";
+            }
+            else
+            {
+                errorMessage = "Employee not found or could not be deleted.";
+            }
+
+            showDeleteConfirm = false;
+            employeeToDelete = null;
+            await LoadEmployees();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error deleting employee: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+}

@@ -1,0 +1,42 @@
+@page "/"
+
+<div class="container mt-4">
+    <div class="jumbotron p-4 bg-light rounded-3 shadow-sm">
+        <h1 class="display-5 fw-bold">Welcome to BlazorCRUD</h1>
+        <p class="lead">
+            A full-stack CRUD application built with Blazor Server and SQL Server for managing employee records.
+        </p>
+        <hr class="my-4" />
+        <p>Use the Employee Management section to create, view, update, and delete employee records.</p>
+        <a href="employees" class="btn btn-primary btn-lg">
+            &#128101; Manage Employees
+        </a>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Create</div>
+                <div class="card-body">
+                    <p class="card-text">Add new employee records with full validation.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Read</div>
+                <div class="card-body">
+                    <p class="card-text">View and search all employee records in a table.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">Update &amp; Delete</div>
+                <div class="card-body">
+                    <p class="card-text">Edit or remove employee records with confirmation.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
