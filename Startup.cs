@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using BlazorCRUD.Data;
 using BlazorCRUD.Repository;
@@ -29,12 +30,16 @@ namespace BlazorCRUD {
             services.AddSwaggerGen();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger) {
+            logger.LogInformation("Configuring application middleware. Environment: {Environment}", env.EnvironmentName);
+
             if (env.IsDevelopment()) {
+                logger.LogInformation("Running in Development mode. Developer exception page and Swagger enabled.");
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             } else {
+                logger.LogInformation("Running in {Environment} mode.", env.EnvironmentName);
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
@@ -47,6 +52,8 @@ namespace BlazorCRUD {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+
+            logger.LogInformation("Application middleware configured successfully.");
         }
     }
 }
