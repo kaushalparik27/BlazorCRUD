@@ -4,7 +4,7 @@
 USE BlazorCRUDDB;
 GO
 
-INSERT INTO Employee (EmployeeCode, FirstName, LastName, Email, PhoneNumber, Department, Designation, JoiningDate, BasicSalary)
+INSERT INTO Employees (EmployeeCode, FirstName, LastName, Email, PhoneNumber, Department, Designation, JoiningDate, BasicSalary)
 VALUES
     ('EMP001', 'Alice',   'Johnson',  'alice.johnson@example.com',  '+1-555-0101', 'Engineering',  'Senior Software Engineer', '2019-03-15', 95000.00),
     ('EMP002', 'Bob',     'Smith',    'bob.smith@example.com',      '+1-555-0102', 'Engineering',  'Software Engineer',        '2020-07-01', 75000.00),
