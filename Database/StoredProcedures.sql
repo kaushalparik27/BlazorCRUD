@@ -1,7 +1,7 @@
--- CRUD Stored Procedures for the Employees table in BlazorCRUDDB
+-- CRUD Stored Procedures for the Employees table in BlazorCRUD
 -- Run this script after creating the Employees table (EmployeeDB.sql)
 
-USE BlazorCRUDDB;
+USE BlazorCRUD;
 GO
 
 -- =============================================

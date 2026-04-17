@@ -1,7 +1,7 @@
 -- Sample employee data for testing
 -- Run this script after creating the Employees table
 
-USE BlazorCRUDDB;
+USE BlazorCRUD;
 GO
 
 INSERT INTO Employees (EmployeeCode, FirstName, LastName, Email, PhoneNumber, Department, Designation, JoiningDate, BasicSalary)

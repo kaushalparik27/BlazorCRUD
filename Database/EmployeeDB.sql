@@ -2,13 +2,13 @@
 -- Run this script to create the database and table before starting the application
 
 -- Create the database (if it does not already exist)
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'BlazorCRUDDB')
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'BlazorCRUD')
 BEGIN
-    CREATE DATABASE BlazorCRUDDB;
+    CREATE DATABASE BlazorCRUD;
 END
 GO
 
-USE BlazorCRUDDB;
+USE BlazorCRUD;
 GO
 
 -- Create the Employees table
